@@ -23,7 +23,7 @@ while (my $line = <$fh>) {
         my $lc_name = lc $name;
 
         if ($lc_name eq 'nathan' && $id eq '1') {
-            say "login successful";
+            say "print login successful";
         }
         else {
             say "invalid credentials";
