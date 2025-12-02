@@ -1,42 +1,29 @@
+#!/usr/bin/perl
+
 use strict;
 use warnings;
-use 5.010; # Enables 'say'
+# You need to install this module first: cpan install MIME::Base64
+use MIME::Base64;
 
-my $input_file = 'note_practise.txt';
+my $target_password = "MySuperSecretPassword123!";
+my $encoded_data;
 
-# Open the input file (die with an error message if it fails)
-open my $fh, '<', $input_file or die "Can't open '$input_file': $!";
+print "--- Original Data ---\n";
+print "Target String: $target_password\n";
 
-# We'll search for a line containing both Name: ... and ID: ...
-my $found = 0;
-while (my $line = <$fh>) {
-    chomp $line;
+# --- 1. Encode the password using the encode_base64 function
+$encoded_data = encode_base64($target_password);
 
-    # More flexible pattern: capture name (anything up to a word boundary or comma)
-    # and capture the ID token (non-space sequence). Case-insensitive for "Name".
-    if ($line =~ /Name:\s*([^,;\n]+?)\b.*?ID:\s*(\S+)/i) {
-        my ($name, $id) = ($1, $2);
-        $name =~ s/^\s+|\s+$//g;
-        $id   =~ s/^\s+|\s+$//g;
+# --- 2. Remove the trailing newline character added by base64 (for clean use)
+# Use the binding operator to modify the $encoded_data in place
+# It substitutes the final newline ($) with nothing.
+$encoded_data =~ s/\n$//;
 
-        # Normalize name for comparison
-        my $lc_name = lc $name;
 
-        if ($lc_name eq 'nathan' && $id eq '1') {
-            say "print login successful";
-        }
-        else {
-            say "invalid credentials";
-        }
+print "\n--- Obfuscated Data ---\n";
+print "Base64 Output: $encoded_data\n";
 
-        $found = 1;
-        last;    # stop after the first match
-    }
-}
+# --- 3. Show the reverse, for verification (the true purpose of obfuscation)
+my $decoded_data = decode_base64($encoded_data);
 
-# If no matching Name/ID pair was found at all, consider credentials invalid
-unless ($found) {
-    say "invalid credentials";
-}
-
-close $fh;
+print "Decoded Back:  $decoded_data\n";
